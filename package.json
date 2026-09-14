@@ -1,0 +1,21 @@
+{
+  "name": "js-network",
+  "productName": "JS NETWORK",
+  "version": "1.0.0",
+  "description": "JS NETWORK — a web-based shop management app with inventory, sales, expense and income tracking. Built with Node.js, Express and MySQL for shared hosting deployment.",
+  "main": "server.js",
+  "author": {
+    "name": "JS NETWORK",
+    "email": "info@jsnetwork.local"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.4"
+  }
+}

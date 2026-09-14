@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:" />
+  <title>JS NETWORK Accounts Management</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div id="login-container" class="login-container">
+    <div id="login-glass-card" class="login-card">
+      <div class="login-brand">
+        <img src="jsnetwork.jpg" alt="JS Network Logo" class="login-logo" />
+        <h1 class="login-title" data-i18n="login.title">JS Network Accounts Management</h1>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="login-username" data-i18n="login.username">Username</label>
+          <input type="text" id="login-username" maxlength="100" placeholder="Enter username" data-i18n-placeholder="login.usernamePlaceholder" autocomplete="off" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password" data-i18n="login.password">Password</label>
+          <input type="password" id="login-password" maxlength="100" placeholder="Enter password" data-i18n-placeholder="login.passwordPlaceholder" required />
+        </div>
+
+        <div class="form-error" id="login-form-error"></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-login-green btn-block" id="btn-login" data-i18n="login.login">Log In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ MAIN APP ============ -->
+  <div id="main-app-container" class="app" style="display: none;">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="jsnetwork.jpg" alt="JS NETWORK Accounts Management" />
+        <button type="button" class="lang-toggle" id="btn-lang-toggle" data-lang-toggle="sidebar" title="Switch language / ভাষা পরিবর্তন" data-i18n-title="lang.buttonTitle" aria-label="Switch language / ভাষা পরিবর্তন" data-i18n-aria-label="lang.buttonTitle">বাংলা</button>
+      </div>
+
+      <nav class="nav">
+        <!-- Dashboard: single direct link, top level -->
+        <a class="nav-item nav-link active" data-view="dashboard" href="#" title="Dashboard" data-i18n-title="nav.dashboard">
+          <span class="nav-icon">📈</span>
+          <span class="nav-group-label" data-i18n="nav.dashboard">Dashboard</span>
+        </a>
+
+        <!-- Transaction (expandable dropdown) -->
+        <div class="nav-group">
+          <button class="nav-item nav-group-toggle" data-group="transaction" type="button">
+            <span class="nav-icon">➕</span>
+            <span class="nav-group-label" data-i18n="nav.transaction">Transaction</span>
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-submenu" data-submenu="transaction">
+            <button class="nav-subitem" data-view="add-transaction" data-transaction-mode="income" type="button" data-i18n="nav.income">💰 Income</button>
+            <button class="nav-subitem" data-view="add-transaction" data-transaction-mode="expense" type="button" data-i18n="nav.expense">💸 Expense</button>
+          </div>
+        </div>
+
+        <!-- Reports (expandable dropdown) -->
+        <div class="nav-group">
+          <button class="nav-item nav-group-toggle" data-group="reports" type="button">
+            <span class="nav-icon">📊</span>
+            <span class="nav-group-label" data-i18n="nav.reports">Reports</span>
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-submenu" data-submenu="reports">
+            <button class="nav-subitem" data-view="daily-report" id="menu-daily-report" type="button" data-i18n="nav.dailyReports">📅 Daily Reports</button>
+            <button class="nav-subitem" data-view="monthly-report" type="button" data-i18n="nav.monthlyReports">🗓️ Monthly Reports</button>
+          </div>
+        </div>
+
+        <!-- History (expandable dropdown) -->
+        <div class="nav-group">
+          <button class="nav-item nav-group-toggle" data-group="history" type="button">
+            <span class="nav-icon">📋</span>
+            <span class="nav-group-label" data-i18n="nav.history">History</span>
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-submenu" data-submenu="history">
+            <button class="nav-subitem" data-view="history" data-history-filter="expense" type="button" data-i18n="nav.expenseHistory">💸 Expense History</button>
+            <button class="nav-subitem" data-view="history" data-history-filter="income" type="button" data-i18n="nav.incomeHistory">💵 Income History</button>
+          </div>
+        </div>
+
+        <!-- Settings (expandable dropdown) -->
+        <div class="nav-group">
+          <button class="nav-item nav-group-toggle" data-group="settings" type="button">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-group-label" data-i18n="nav.settings">Settings</span>
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-submenu" data-submenu="settings">
+            <button class="nav-subitem" data-view="users" data-users-action="add" type="button" data-i18n="nav.addUser">➕ Add User</button>
+            <button class="nav-subitem" data-view="users" data-users-action="manage" type="button" data-i18n="nav.manageUser">👥 Manage User</button>
+            <button class="nav-subitem" data-view="change-password" type="button" data-i18n="nav.changePassword">🔑 Change Password</button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user" id="sidebar-user">
+          <span class="sidebar-user-icon">👤</span>
+          <span class="sidebar-user-name" id="sidebar-user-name">—</span>
+        </div>
+        <button class="btn btn-logout" id="btn-logout">
+          <span class="nav-icon">🚪</span><span data-i18n="nav.logout">Logout</span>
+        </button>
+        <div class="storage-badge">
+          <span class="dot"></span> <span data-i18n="nav.offline">Offline · SQLite</span>
+        </div>
+        <p class="version">v1.0.1</p>
+      </div>
+    </aside>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="main">
+      <div class="mobile-topbar" id="mobile-topbar">
+        <div class="mobile-topbar-left">
+          <button type="button" class="btn-hamburger" id="btn-hamburger" aria-label="Toggle navigation" data-i18n-aria-label="nav.toggle">☰</button>
+          <div class="mobile-brand-title">
+            <img src="jsnetwork.jpg" alt="Logo" class="mobile-brand-logo" />
+            <span>JS NETWORK</span>
+          </div>
+        </div>
+        <button type="button" class="lang-toggle" id="btn-lang-toggle-mobile" title="Switch language / ভাষা পরিবর্তন" data-i18n-title="lang.buttonTitle" aria-label="Switch language / ভাষা পরিবর্তন" data-i18n-aria-label="lang.buttonTitle">বাংলা</button>
+      </div>
+
+      <!-- ============ DASHBOARD VIEW ============ -->
+      <section id="view-dashboard" class="view active">
+        <header class="view-header">
+          <h2 data-i18n="dashboard.title">Dashboard</h2>
+          <p id="dashboard-date" class="view-subtext">
+            <span id="current-date"></span>
+            <span id="digital-clock" style="margin-left: 15px; font-weight: bold; color: #4f46e5;"></span>
+          </p>
+        </header>
+
+        <div class="dashboard-toolbar">
+          <button class="btn btn-primary" id="btn-backup" data-i18n="dashboard.backup">📥 Download Daily Backup (CSV)</button>
+        </div>
+
+        <div class="cards">
+          <div class="card today-card">
+            <div class="card-icon">📅</div>
+            <div class="card-info">
+              <p class="card-label" data-i18n="dashboard.todayIncome">Today's Income</p>
+              <h3 class="card-value" id="today-income">0.00</h3>
+            </div>
+          </div>
+          <div class="card today-expense-card">
+            <div class="card-icon">📉</div>
+            <div class="card-info">
+              <p class="card-label" data-i18n="dashboard.todayExpense">Today's Expense</p>
+              <h3 class="card-value" id="today-expense">0.00</h3>
+            </div>
+          </div>
+          <div class="card cash-card" id="cash-card">
+            <div class="card-icon">💵</div>
+            <div class="card-info">
+              <p class="card-label" data-i18n="dashboard.todayNetCash">Today's Net Cash</p>
+              <h3 class="card-value" id="cash-in-hand">0.00</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="recent-panel">
+          <div class="panel-header">
+            <h3 data-i18n="dashboard.recentTransactions">Recent Transactions</h3>
+            <button class="btn btn-ghost" id="btn-view-all" data-i18n="dashboard.viewAll">View All</button>
+          </div>
+          <div class="recent-list" id="recent-list"></div>
+        </div>
+      </section>
+
+      <!-- ============ DAILY REPORT VIEW ============ -->
+      <section id="daily-report-section" class="section" style="display: none;">
+        <!-- Print Header -->
+        <div class="print-header print-only">
+          <div class="print-brand-row">
+            <img src="jsnetwork.jpg" alt="JS Network Logo" class="print-logo" />
+            <div class="print-brand-info">
+              <h1 class="print-company-name">JS NETWORK</h1>
+              <p class="print-company-sub" data-i18n="print.companySub">Accounts Management System</p>
+              <div class="print-report-title" data-i18n="print.dailyReportTitle">Daily Accounts Report</div>
+              <div class="print-meta-details">
+                <span><strong data-i18n="print.date">Date:</strong> <span id="print-daily-date">—</span></span>
+              </div>
+            </div>
+          </div>
+          <hr class="print-header-hr" />
+        </div>
+
+        <header class="report-header">
+          <h2 data-i18n="report.dailyTitle">Daily Report</h2>
+          <p class="report-subtitle" data-i18n="report.dailySubtitle">View income & expense transactions for a selected date</p>
+        </header>
+
+        <div class="report-filter-card">
+          <div class="report-filter-group">
+            <label for="filter-from-date" data-i18n="common.date">Date</label>
+            <input type="date" id="filter-from-date" class="report-date-input" />
+          </div>
+          <input type="date" id="filter-to-date" class="report-date-input" style="display: none;" />
+          <button id="btn-search-date" class="btn btn-primary report-search-btn" data-i18n="common.search">Search</button>
+          <button type="button" id="btn-print-daily-report" class="btn btn-print print-btn report-print-btn" data-i18n="common.printReport" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #0ea5e9; color: #ffffff; padding: 11px 22px; font-size: 14px; font-weight: 700; border: none; border-radius: 9px; cursor: pointer; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.25); visibility: visible !important;">🖨️ Print Report</button>
+          <div class="report-previous-balance" id="daily-previous-balance">Yesterday Balance: Tk 0.00</div>
+        </div>
+
+        <div class="report-columns">
+          <!-- ============ INCOME COLUMN ============ -->
+          <div class="report-column report-column-income">
+            <div class="report-column-header">
+              <span class="report-column-title"><span class="report-column-icon">📈 </span><span data-i18n="common.income">Income</span></span>
+            </div>
+            <div class="report-table-card report-table-card-column">
+              <div class="table-wrapper">
+                <table class="report-table report-table-column">
+                  <thead>
+                    <tr>
+                      <th data-i18n="table.categoryHead">Category/Head</th>
+                      <th class="amount-header right" data-i18n="table.amount">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="report-income-body">
+                    <!-- Income data will be injected here -->
+                  </tbody>
+                  <tfoot class="report-tfoot">
+                    <tr class="report-total-row">
+                      <th data-i18n="table.totalIncome">Total Income</th>
+                      <th class="amount-cell income nowrap right" id="report-table-total-income">Tk 0.00</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="report-column-total income-total">
+              <span data-i18n="table.totalIncome">Total Income</span>
+              <span id="report-total-income">Tk 0.00</span>
+            </div>
+          </div>
+
+          <!-- ============ EXPENSE COLUMN ============ -->
+          <div class="report-column report-column-expense">
+            <div class="report-column-header">
+              <span class="report-column-title"><span class="report-column-icon">📉 </span><span data-i18n="common.expense">Expense</span></span>
+            </div>
+            <div class="report-table-card report-table-card-column">
+              <div class="table-wrapper">
+                <table class="report-table report-table-column">
+                  <thead>
+                    <tr>
+                      <th data-i18n="table.categoryHead">Category/Head</th>
+                      <th class="amount-header right" data-i18n="table.amount">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="report-expense-body">
+                    <!-- Expense data will be injected here -->
+                  </tbody>
+                  <tfoot class="report-tfoot">
+                    <tr class="report-total-row">
+                      <th data-i18n="table.totalExpense">Total Expense</th>
+                      <th class="amount-cell expense nowrap right" id="report-table-total-expense">Tk 0.00</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="report-column-total expense-total">
+              <span data-i18n="table.totalExpense">Total Expense</span>
+              <span id="report-total-expense">Tk 0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ CASH IN HAND SUMMARY BOXES ============ -->
+        <div class="report-summary-boxes">
+          <div class="report-summary-box">
+            <span class="report-summary-label" data-i18n="report.todayCashInHand">Today's Cash In Hand</span>
+            <span class="report-summary-amount" id="report-today-cash">Tk 0.00</span>
+          </div>
+          <div class="report-summary-box total-box">
+            <span class="report-summary-label" data-i18n="report.totalCashInHand">Total Cash In Hand</span>
+            <span class="report-summary-amount" id="report-cash-in-hand">Tk 0.00</span>
+          </div>
+        </div>
+
+        <!-- Print Footer -->
+        <div class="print-footer print-only">
+          <div class="print-signatures">
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.accounts">Accounts</span>
+            </div>
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.manager">Manager</span>
+            </div>
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.managingDirector">Managing Director</span>
+            </div>
+          </div>
+          <div class="print-footer-info">
+            <span><span data-i18n="print.printedOn">Printed on:</span> <span class="print-daily-timestamp">—</span></span>
+            <span data-i18n="print.footerCompany">JS NETWORK Accounts Management</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MONTHLY REPORT VIEW ============ -->
+      <section id="view-monthly-report" class="view">
+        <!-- Print Header -->
+        <div class="print-header print-only">
+          <div class="print-brand-row">
+            <img src="jsnetwork.jpg" alt="JS Network Logo" class="print-logo" />
+            <div class="print-brand-info">
+              <h1 class="print-company-name">JS NETWORK</h1>
+              <p class="print-company-sub" data-i18n="print.companySub">Accounts Management System</p>
+              <div class="print-report-title" data-i18n="print.monthlyReportTitle">Monthly Accounts Report</div>
+              <div class="print-meta-details">
+                <span><strong data-i18n="print.month">Month:</strong> <span id="print-monthly-date">—</span></span>
+              </div>
+            </div>
+          </div>
+          <hr class="print-header-hr" />
+        </div>
+
+        <header class="report-header">
+          <h2 data-i18n="report.monthlyTitle">Monthly Report</h2>
+          <p class="report-subtitle" id="monthly-report-subtitle" data-i18n="report.monthlySubtitle">View income & expense transactions for a selected month</p>
+        </header>
+
+        <div class="report-filter-card">
+          <div class="report-filter-group">
+            <label for="monthly-month-picker" data-i18n="common.month">Month</label>
+            <input type="month" id="monthly-month-picker" class="report-date-input" />
+          </div>
+          <button id="btn-monthly-search" class="btn btn-primary report-search-btn" data-i18n="common.search">Search</button>
+          <button type="button" id="btn-print-monthly-report" class="btn btn-print print-btn report-print-btn" data-i18n="common.printReport" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #0ea5e9; color: #ffffff; padding: 11px 22px; font-size: 14px; font-weight: 700; border: none; border-radius: 9px; cursor: pointer; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.25); visibility: visible !important;">🖨️ Print Report</button>
+          <div class="report-previous-balance" id="monthly-previous-balance">Last Month Balance: Tk 0.00</div>
+        </div>
+
+        <div class="report-columns">
+          <!-- ============ INCOME COLUMN ============ -->
+          <div class="report-column report-column-income">
+            <div class="report-column-header">
+              <span class="report-column-title"><span class="report-column-icon">📈 </span><span data-i18n="common.income">Income</span></span>
+            </div>
+            <div class="report-table-card report-table-card-column">
+              <div class="table-wrapper">
+                <table class="report-table report-table-column">
+                  <thead>
+                    <tr>
+                      <th data-i18n="table.categoryHead">Category/Head</th>
+                      <th class="amount-header right" data-i18n="table.amount">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="monthly-report-income-body">
+                    <!-- Monthly income data will be injected here -->
+                  </tbody>
+                  <tfoot class="report-tfoot">
+                    <tr class="report-total-row">
+                      <th data-i18n="table.totalIncome">Total Income</th>
+                      <th class="amount-cell income nowrap right" id="monthly-report-table-total-income">Tk 0.00</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="report-column-total income-total">
+              <span data-i18n="table.totalIncome">Total Income</span>
+              <span id="monthly-report-total-income">Tk 0.00</span>
+            </div>
+          </div>
+
+          <!-- ============ EXPENSE COLUMN ============ -->
+          <div class="report-column report-column-expense">
+            <div class="report-column-header">
+              <span class="report-column-title"><span class="report-column-icon">📉 </span><span data-i18n="common.expense">Expense</span></span>
+            </div>
+            <div class="report-table-card report-table-card-column">
+              <div class="table-wrapper">
+                <table class="report-table report-table-column">
+                  <thead>
+                    <tr>
+                      <th data-i18n="table.categoryHead">Category/Head</th>
+                      <th class="amount-header right" data-i18n="table.amount">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="monthly-report-expense-body">
+                    <!-- Monthly expense data will be injected here -->
+                  </tbody>
+                  <tfoot class="report-tfoot">
+                    <tr class="report-total-row">
+                      <th data-i18n="table.totalExpense">Total Expense</th>
+                      <th class="amount-cell expense nowrap right" id="monthly-report-table-total-expense">Tk 0.00</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="report-column-total expense-total">
+              <span data-i18n="table.totalExpense">Total Expense</span>
+              <span id="monthly-report-total-expense">Tk 0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ CASH IN HAND SUMMARY BOXES ============ -->
+        <div class="report-summary-boxes">
+          <div class="report-summary-box">
+            <span class="report-summary-label" data-i18n="report.thisMonthCash">This Month's Cash</span>
+            <span class="report-summary-amount" id="monthly-report-month-cash">Tk 0.00</span>
+          </div>
+          <div class="report-summary-box total-box">
+            <span class="report-summary-label" data-i18n="report.totalCashInHand">Total Cash In Hand</span>
+            <span class="report-summary-amount" id="monthly-report-cash-in-hand">Tk 0.00</span>
+          </div>
+        </div>
+
+        <!-- Print Footer -->
+        <div class="print-footer print-only">
+          <div class="print-signatures">
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.accounts">Accounts</span>
+            </div>
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.manager">Manager</span>
+            </div>
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.managingDirector">Managing Director</span>
+            </div>
+          </div>
+          <div class="print-footer-info">
+            <span><span data-i18n="print.printedOn">Printed on:</span> <span class="print-monthly-timestamp">—</span></span>
+            <span data-i18n="print.footerCompany">JS NETWORK Accounts Management</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ INVENTORY VIEW ============ -->
+      <section id="view-inventory" class="view">
+        <header class="view-header">
+          <h2 data-i18n="inventory.title">Inventory</h2>
+          <p class="view-subtext" data-i18n="inventory.subtitle">Add products and manage stock</p>
+        </header>
+
+        <div class="form-centered">
+        <form id="product-form" class="form-card product-form-card" novalidate>
+          <div class="product-form-header">
+            <div class="product-form-icon">📦</div>
+            <div>
+              <h3 class="product-form-title" id="product-form-title" data-i18n="inventory.addTitle">Add New Product</h3>
+              <p class="product-form-subtitle" id="product-form-subtitle" data-i18n="inventory.addSubtitle">Add a new item to your inventory</p>
+            </div>
+          </div>
+
+          <div class="product-grid">
+            <div class="product-field">
+              <label for="product-name" data-i18n="inventory.productName">Product Name</label>
+              <input type="text" id="product-name" maxlength="100" placeholder="e.g. SIM Card" data-i18n-placeholder="inventory.productNamePlaceholder" required />
+            </div>
+          </div>
+
+          <div class="product-grid product-grid-2">
+            <div class="product-field">
+              <label for="product-purchase-price"><span data-i18n="inventory.purchasePrice">Purchase Price</span> <span class="optional" data-i18n="inventory.purchasePriceAlias">(কেনার দাম)</span></label>
+              <input type="number" id="product-purchase-price" min="0" step="0.01" placeholder="0.00" required />
+            </div>
+            <div class="product-field">
+              <label for="product-stock" data-i18n="inventory.initialStock">Initial Stock</label>
+              <input type="number" id="product-stock" min="0" step="1" placeholder="0" required />
+            </div>
+          </div>
+
+          <div class="form-error" id="product-form-error"></div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" id="btn-cancel-product-edit" style="display: none;" data-i18n="common.cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-add-product" data-i18n="inventory.addButton">Add Product</button>
+          </div>
+        </form>
+        </div>
+
+        <div class="inventory-panel">
+          <div class="panel-header">
+            <h3 data-i18n="inventory.productList">Product List</h3>
+            <button class="btn btn-ghost btn-sm" id="btn-refresh-products" data-i18n="common.refresh">🔄 Refresh</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th data-i18n="table.productName">Product Name</th>
+                  <th class="right" data-i18n="table.purchasePrice">Purchase Price</th>
+                  <th class="right" data-i18n="table.stock">Stock</th>
+                  <th class="center" data-i18n="table.actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="product-table-body"></tbody>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="product-count">0 products</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SELL PRODUCT VIEW ============ -->
+      <section id="view-sell" class="view">
+        <header class="view-header">
+          <h2 data-i18n="sale.title">Sell Product</h2>
+          <p class="view-subtext" data-i18n="sale.subtitle">Record a sale — stock is deducted automatically</p>
+        </header>
+
+        <div class="form-centered">
+        <form id="sale-form" class="form-card" novalidate>
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="customer-name" data-i18n="sale.customerName">Customer Name</label>
+              <input type="text" id="customer-name" maxlength="100" required />
+            </div>
+            <div class="form-group">
+              <label for="sale-date" data-i18n="common.date">Date</label>
+              <input type="date" id="sale-date" required />
+            </div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group autocomplete-wrapper">
+              <label for="sale-product-search" data-i18n="sale.productName">Product Name</label>
+              <input type="text" id="sale-product-search" autocomplete="off" required />
+              <input type="hidden" id="sale-product" />
+              <div class="autocomplete-dropdown" id="sale-product-dropdown"></div>
+            </div>
+            <div class="form-group">
+              <label for="sale-quantity" data-i18n="sale.quantity">Quantity</label>
+              <input type="number" id="sale-quantity" min="1" step="1" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sale-discount"><span data-i18n="sale.discount">Discount (Tk)</span> <span class="optional" data-i18n="common.optional">(optional)</span></label>
+              <input type="number" id="sale-discount" min="0" step="0.01" />
+            </div>
+          </div>
+
+          <div class="sale-summary" id="sale-summary">
+            <div class="sale-summary-row">
+              <span data-i18n="sale.sellingPrice">Selling Price</span>
+              <input type="number" id="sale-selling-price" class="form-control sale-price-input" min="0" step="0.01" />
+            </div>
+            <div class="sale-summary-row">
+              <span data-i18n="sale.purchasePrice">Purchase Price</span>
+              <span id="sale-unit-purchase-price">—</span>
+            </div>
+            <div class="sale-summary-row profit">
+              <span data-i18n="sale.profit">Profit</span>
+              <span id="sale-unit-profit">—</span>
+            </div>
+            <div class="sale-summary-row total">
+              <span data-i18n="sale.totalAmount">Total Amount</span>
+              <span id="sale-total-amount">—</span>
+            </div>
+          </div>
+
+          <div class="form-error" id="sale-form-error"></div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-sell-product" data-i18n="sale.sellButton">Sell Product</button>
+          </div>
+        </form>
+        </div>
+
+        <div class="inventory-panel" id="sales-panel">
+          <div class="panel-header">
+            <h3 data-i18n="sale.recentSales">Recent Sales</h3>
+            <button class="btn btn-ghost btn-sm" id="btn-refresh-sales" data-i18n="common.refresh">🔄 Refresh</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.date">Date</th>
+                  <th data-i18n="table.customer">Customer</th>
+                  <th data-i18n="table.product">Product</th>
+                  <th class="right" data-i18n="table.qty">Qty</th>
+                  <th class="right nowrap" data-i18n="table.unitPrice">Unit Price</th>
+                  <th class="right nowrap" data-i18n="table.total">Total</th>
+                  <th class="right nowrap" data-i18n="table.profit">Profit</th>
+                  <th data-i18n="table.addedBy">ADDED BY</th>
+                </tr>
+              </thead>
+              <tbody id="sales-table-body"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="5"></td>
+                  <td class="right nowrap" id="sales-tfoot-total">Total: Tk 0.00</td>
+                  <td class="right nowrap" id="sales-tfoot-profit">Profit: Tk 0.00</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="sales-count">0 sales</span>
+          </div>
+        </div>
+
+        <!-- ============ INVOICE / RECEIPT ============ -->
+        <div class="invoice-container" id="invoice-container">
+          <div class="invoice-card" id="invoice-card">
+            <div class="invoice-header">
+              <div class="invoice-shop-icon">📶</div>
+              <div>
+                <h2 class="invoice-shop-name">JS NETWORK</h2>
+                <p class="invoice-shop-sub" id="invoice-shop-details" data-i18n="invoice.shopDetails">Shop Details/Address</p>
+              </div>
+            </div>
+
+            <div class="invoice-line"></div>
+
+            <div class="invoice-row receipt-only">
+              <span data-i18n="invoice.customerName">Customer Name</span>
+              <span id="invoice-customer">—</span>
+            </div>
+            <div class="invoice-row receipt-only">
+              <span data-i18n="common.date">Date</span>
+              <span id="invoice-date">—</span>
+            </div>
+
+            <div class="invoice-line receipt-only"></div>
+
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.productName">Product Name</th>
+                  <th class="center" data-i18n="table.qty">Qty</th>
+                  <th class="right" data-i18n="table.total">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="invoice-product">—</td>
+                  <td id="invoice-qty" class="center">—</td>
+                  <td id="invoice-total" class="right">—</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="invoice-line"></div>
+
+            <div class="invoice-grand-total">
+              <span data-i18n="invoice.totalSoldAmount">Total Sold Amount</span>
+              <span id="invoice-grand-total">—</span>
+            </div>
+
+            <div class="invoice-footer-note" data-i18n="invoice.thankYou">Thank you for shopping at JS NETWORK!</div>
+
+            <div class="invoice-actions no-print-receipt">
+              <button class="btn btn-primary" id="btn-print-invoice" data-i18n="invoice.printReceipt">🖨️ Print Receipt</button>
+              <button class="btn btn-ghost" id="btn-new-sale" data-i18n="invoice.newSale">➕ New Sale</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ADD TRANSACTION VIEW (single vertical form) ============ -->
+      <section id="view-add-transaction" class="view">
+        <header class="view-header">
+          <h2 data-i18n="transaction.title">Add Transaction</h2>
+          <p class="view-subtext" data-i18n="transaction.subtitle">Record a new income or expense entry</p>
+        </header>
+
+        <div class="form-centered">
+          <div class="form-card transaction-card">
+            <!-- Income / Expense mode toggle -->
+            <div class="transaction-mode-toggle" role="group" aria-label="Transaction type">
+              <button type="button" class="mode-toggle-btn income active" id="btn-mode-income" data-mode="income" data-i18n="nav.income">💰 Income</button>
+              <button type="button" class="mode-toggle-btn expense" id="btn-mode-expense" data-mode="expense" data-i18n="nav.expense">💸 Expense</button>
+            </div>
+
+            <form id="transaction-form" novalidate>
+              <h3 class="form-section-title" id="transaction-form-title" data-i18n="transaction.addIncome">➕ Add Income</h3>
+              <input type="hidden" id="transaction-edit-id" value="" />
+
+              <!-- Date: auto-filled with today's local date, read-only -->
+              <div class="form-group">
+                <label for="transaction-date" data-i18n="common.date">Date</label>
+                <input type="date" id="transaction-date" required readonly />
+              </div>
+
+              <!-- Head: label changes based on the active mode -->
+              <div class="form-group">
+                <label for="transaction-head" id="transaction-head-label" data-i18n="transaction.headIncome">Head (Income)</label>
+                <input type="text" id="transaction-head" maxlength="255" required />
+              </div>
+
+              <!-- Amount -->
+              <div class="form-group">
+                <label for="transaction-amount" data-i18n="transaction.amount">Amount</label>
+                <input type="number" id="transaction-amount" min="0.01" step="0.01" required />
+              </div>
+
+              <!-- Note -->
+              <div class="form-group">
+                <label for="transaction-note" data-i18n="transaction.note">Note</label>
+                <textarea id="transaction-note" rows="3" maxlength="1000"></textarea>
+              </div>
+
+              <div class="form-error" id="transaction-form-error"></div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-ghost" id="btn-cancel-transaction-edit" style="display: none;" data-i18n="common.cancelEdit">Cancel Edit</button>
+                <button type="submit" class="btn btn-primary" id="btn-save-transaction" data-i18n="common.save">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HISTORY VIEW ============ -->
+      <section id="view-history" class="view">
+        <!-- Print Header -->
+        <div class="print-header print-only">
+          <div class="print-brand-row">
+            <img src="jsnetwork.jpg" alt="JS Network Logo" class="print-logo" />
+            <div class="print-brand-info">
+              <h1 class="print-company-name">JS NETWORK</h1>
+              <p class="print-company-sub" data-i18n="print.companySub">Accounts Management System</p>
+              <div class="print-report-title" id="print-history-report-title" data-i18n="print.historyReportTitle">Transaction History Report</div>
+              <div class="print-meta-details">
+                <span><strong data-i18n="print.period">Period:</strong> <span id="print-history-date">—</span></span>
+              </div>
+            </div>
+          </div>
+          <hr class="print-header-hr" />
+        </div>
+
+        <header class="view-header">
+          <h2 data-i18n="history.title">History</h2>
+          <p class="view-subtext" data-i18n="history.subtitle">All recorded transactions</p>
+        </header>
+
+        <div class="history-toolbar">
+          <div class="filter-group">
+            <input type="text" id="search-input" placeholder="🔍  Search..." data-i18n-placeholder="history.searchPlaceholder" />
+            <div class="history-date-filter">
+              <label for="history-from-date" data-i18n="history.fromDate">From Date:</label>
+              <input type="date" id="history-from-date" />
+            </div>
+            <div class="history-date-filter">
+              <label for="history-to-date" data-i18n="history.toDate">To Date:</label>
+              <input type="date" id="history-to-date" />
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="btn-refresh" data-i18n="common.refresh">🔄 Refresh</button>
+          <button type="button" class="btn btn-print print-btn history-print-btn" id="btn-print-history" data-i18n="common.printReport" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #0ea5e9; color: #ffffff; padding: 10px 20px; font-size: 13.5px; font-weight: 700; border: none; border-radius: 9px; cursor: pointer; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.25); visibility: visible !important;">🖨️ Print Report</button>
+        </div>
+
+        <div class="history-tabs">
+          <button class="history-tab active" data-history-tab="all" data-i18n="history.tabAll">All Transactions</button>
+          <button class="history-tab" data-history-tab="income" data-i18n="history.tabIncome">Income History</button>
+          <button class="history-tab" data-history-tab="expense" data-i18n="history.tabExpense">Expense History</button>
+        </div>
+
+        <div class="history-tab-panel" id="history-panel-all">
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.date">Date</th>
+                  <th data-i18n="table.type">Type</th>
+                  <th data-i18n="table.category">Category</th>
+                  <th class="right nowrap" data-i18n="table.amount">Amount</th>
+                  <th data-i18n="table.addedBy">ADDED BY</th>
+                  <th class="history-actions-col center" style="display: none;" data-i18n="table.actionsUpper">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="history-count">0 transactions</span>
+          </div>
+        </div>
+
+        <div class="history-tab-panel" id="history-panel-income" style="display: none;">
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.date">Date</th>
+                  <th data-i18n="table.category">Category</th>
+                  <th class="right nowrap" data-i18n="table.amount">Amount</th>
+                  <th data-i18n="table.addedBy">ADDED BY</th>
+                  <th class="history-actions-col center" style="display: none;" data-i18n="table.actionsUpper">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="history-body-income"></tbody>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="history-count-income">0 income transactions</span>
+          </div>
+        </div>
+
+        <div class="history-tab-panel" id="history-panel-expense" style="display: none;">
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.date">Date</th>
+                  <th data-i18n="table.category">Category</th>
+                  <th class="right nowrap" data-i18n="table.amount">Amount</th>
+                  <th data-i18n="table.addedBy">ADDED BY</th>
+                  <th class="history-actions-col center" style="display: none;" data-i18n="table.actionsUpper">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="history-body-expense"></tbody>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="history-count-expense">0 expense transactions</span>
+          </div>
+        </div>
+
+        <div class="history-summary-cards" id="history-summary-cards">
+          <div class="summary-card summary-income" id="history-card-income">
+            <div class="summary-card-icon">📈</div>
+            <div class="summary-card-info">
+              <p class="summary-card-label" data-i18n="history.totalIncome">Total Income</p>
+              <h3 class="summary-card-value" id="summary-total-income">Tk 0.00</h3>
+            </div>
+          </div>
+          <div class="summary-card summary-expense" id="history-card-expense">
+            <div class="summary-card-icon">📉</div>
+            <div class="summary-card-info">
+              <p class="summary-card-label" data-i18n="history.totalExpense">Total Expense</p>
+              <h3 class="summary-card-value" id="summary-total-expense">Tk 0.00</h3>
+            </div>
+          </div>
+          <div class="summary-card summary-balance" id="history-card-balance">
+            <div class="summary-card-icon">💵</div>
+            <div class="summary-card-info">
+              <p class="summary-card-label" data-i18n="history.balance">Balance</p>
+              <h3 class="summary-card-value" id="summary-balance">Tk 0.00</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Print Footer -->
+        <div class="print-footer print-only">
+          <div class="print-signatures">
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.accounts">Accounts</span>
+            </div>
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.manager">Manager</span>
+            </div>
+            <div class="signature-block">
+              <div class="signature-line"></div>
+              <span class="signature-label" data-i18n="print.managingDirector">Managing Director</span>
+            </div>
+          </div>
+          <div class="print-footer-info">
+            <span><span data-i18n="print.printedOn">Printed on:</span> <span class="print-history-timestamp">—</span></span>
+            <span data-i18n="print.footerCompany">JS NETWORK Accounts Management</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CATEGORIES VIEW ============ -->
+      <div id="categories-section" class="view">
+        <header class="view-header">
+          <h2 data-i18n="categories.title">Manage Categories</h2>
+          <p class="view-subtext" data-i18n="categories.subtitle">Add or remove income & expense categories</p>
+        </header>
+
+        <div class="form-centered">
+        <form id="category-form" class="form-card" novalidate>
+          <h3 class="form-section-title" id="category-form-title" data-i18n="categories.addTitle">➕ Add New Category</h3>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="category-name" data-i18n="categories.name">Category Name</label>
+              <input type="text" id="category-name" maxlength="100" placeholder="e.g. Mobile Sale" data-i18n-placeholder="categories.namePlaceholder" required />
+            </div>
+            <div class="form-group">
+              <label for="category-type" data-i18n="categories.type">Type</label>
+              <select id="category-type" required>
+                <option value="income" data-i18n="common.income">Income</option>
+                <option value="expense" data-i18n="common.expense">Expense</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-error" id="category-form-error"></div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" id="btn-cancel-category-edit" style="display: none;" data-i18n="common.cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-add-category" data-i18n="categories.addButton">Add Category</button>
+          </div>
+        </form>
+        </div>
+
+        <div class="inventory-panel">
+          <div class="panel-header">
+            <h3 data-i18n="categories.list">Category List</h3>
+            <button class="btn btn-ghost btn-sm" id="btn-refresh-categories" data-i18n="common.refresh">🔄 Refresh</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th data-i18n="table.categoryName">Category Name</th>
+                  <th data-i18n="table.type">Type</th>
+                  <th class="center" data-i18n="table.actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="category-table-body"></tbody>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="category-count">0 categories</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ MANAGE USERS VIEW ============ -->
+      <section id="view-users" class="view">
+        <header class="view-header">
+          <h2 data-i18n="users.title">Manage Users</h2>
+          <p class="view-subtext" data-i18n="users.subtitle">Create and manage app users</p>
+        </header>
+
+        <div class="form-centered">
+        <form id="user-form" class="form-card" novalidate>
+          <h3 class="form-section-title" id="user-form-title" data-i18n="users.addTitle">➕ Add New User</h3>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="user-username" data-i18n="users.username">Username</label>
+              <input type="text" id="user-username" maxlength="100" placeholder="e.g. shopmanager" data-i18n-placeholder="users.usernamePlaceholder" required />
+            </div>
+            <div class="form-group">
+              <label for="user-password" data-i18n="users.password">Password</label>
+              <input type="password" id="user-password" maxlength="100" placeholder="Enter password" data-i18n-placeholder="login.passwordPlaceholder" required />
+            </div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="user-role" data-i18n="users.role">Role</label>
+              <select id="user-role" required>
+                <option value="user" data-i18n="role.user">User</option>
+                <option value="admin" data-i18n="common.admin">Admin</option>
+              </select>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 26px;">
+              <input type="checkbox" id="user-can-edit" style="width: 18px; height: 18px; cursor: pointer;" />
+              <label for="user-can-edit" style="margin: 0; cursor: pointer; font-weight: 600;" data-i18n="users.allowEdit">Allow Editing Transactions</label>
+            </div>
+          </div>
+
+          <div class="form-error" id="user-form-error"></div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-create-user" data-i18n="users.createButton">Create User</button>
+          </div>
+        </form>
+        </div>
+
+        <div class="inventory-panel">
+          <div class="panel-header">
+            <h3 data-i18n="users.list">Users List</h3>
+            <button class="btn btn-ghost btn-sm" id="btn-refresh-users" data-i18n="common.refresh">🔄 Refresh</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.id">ID</th>
+                  <th data-i18n="table.username">Username</th>
+                  <th data-i18n="table.role">Role</th>
+                  <th data-i18n="table.canEdit">Can Edit</th>
+                  <th class="center" data-i18n="table.actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="user-table-body"></tbody>
+            </table>
+          </div>
+          <div class="history-footer">
+            <span id="user-count">0 users</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ APP SETTINGS VIEW ============ -->
+      <section id="app-settings-section" class="view">
+        <header class="view-header">
+          <h2 data-i18n="settings.title">App Settings</h2>
+          <p class="view-subtext" data-i18n="settings.subtitle">Customize the application appearance</p>
+        </header>
+
+        <div class="form-centered">
+          <div class="form-card">
+            <h3 class="form-section-title" data-i18n="settings.bgTitle">🖼️ Login Background Image</h3>
+            <p class="view-subtext" style="margin-bottom: 16px;" data-i18n="settings.bgHelp">Choose an image from your computer to use as the login screen background.</p>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="login-bg-input" data-i18n="settings.backgroundImage">Background Image</label>
+                <input type="file" id="login-bg-input" accept="image/*" />
+              </div>
+            </div>
+
+            <div class="form-error" id="app-settings-error"></div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="btn-save-background" data-i18n="settings.saveBackground">💾 Save Background</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CHANGE PASSWORD VIEW ============ -->
+      <section id="view-change-password" class="view">
+        <header class="view-header">
+          <h2 data-i18n="changePassword.title">Change Password</h2>
+          <p class="view-subtext" data-i18n="changePassword.subtitle">Update your account password</p>
+        </header>
+
+        <div class="form-centered">
+        <form id="change-password-form" class="form-card" novalidate>
+          <h3 class="form-section-title" data-i18n="changePassword.formTitle">🔑 Change Password</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cp-current-password" data-i18n="changePassword.current">Current Password</label>
+              <input type="password" id="cp-current-password" maxlength="100" placeholder="Enter current password" data-i18n-placeholder="changePassword.currentPlaceholder" required />
+            </div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="cp-new-password" data-i18n="changePassword.new">New Password</label>
+              <input type="password" id="cp-new-password" maxlength="100" placeholder="Enter new password" data-i18n-placeholder="changePassword.newPlaceholder" required />
+            </div>
+            <div class="form-group">
+              <label for="cp-confirm-password" data-i18n="changePassword.confirm">Confirm Password</label>
+              <input type="password" id="cp-confirm-password" maxlength="100" placeholder="Confirm new password" data-i18n-placeholder="changePassword.confirmPlaceholder" required />
+            </div>
+          </div>
+
+          <div class="form-error" id="change-password-form-error"></div>
+          <div class="form-success" id="change-password-form-success"></div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-update-password" data-i18n="changePassword.updateButton">Update Password</button>
+          </div>
+        </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ CONFIRM DELETE MODAL ============ -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h3 data-i18n="modal.deleteTitle">Delete Transaction?</h3>
+      <p id="modal-message" data-i18n="modal.defaultMessage">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="btn-modal-cancel" data-i18n="common.cancel">Cancel</button>
+        <button class="btn btn-danger" id="btn-modal-confirm" data-i18n="common.delete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EDIT TRANSACTION MODAL ============ -->
+  <div class="modal-overlay" id="edit-tx-modal-overlay">
+    <div class="modal" style="max-width: 440px; text-align: left;">
+      <h3 style="margin-bottom: 16px; font-size: 18px; font-weight: 700;" data-i18n="modal.editTitle">✏️ Edit Transaction</h3>
+      <form id="edit-tx-form" novalidate>
+        <input type="hidden" id="edit-tx-id" />
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label for="edit-tx-date" data-i18n="common.date">Date</label>
+          <input type="date" id="edit-tx-date" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label for="edit-tx-head" data-i18n="modal.headCategory">Head / Category</label>
+          <input type="text" id="edit-tx-head" required maxlength="100" />
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="edit-tx-amount" data-i18n="modal.amountTk">Amount (Tk)</label>
+          <input type="number" id="edit-tx-amount" min="0.01" step="0.01" required />
+        </div>
+        <div class="form-error" id="edit-tx-error" style="margin-bottom: 12px;"></div>
+        <div class="modal-actions" style="justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-ghost" id="btn-edit-tx-cancel" data-i18n="common.cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-edit-tx-save" data-i18n="common.update">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ TOAST ============ -->
+  <div id="toast-container"></div>
+
+  <script src="i18n.js"></script>
+  <script src="api.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

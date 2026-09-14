@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output (electron-builder)
+release/
+dist/
+
+# Electron debug logs
+*.log
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+
+# Env files
+.env
+.env.local
