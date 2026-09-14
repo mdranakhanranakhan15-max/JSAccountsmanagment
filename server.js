@@ -533,10 +533,14 @@ function poolPing() {
 }
 
 // ============================================================
-// Bootstrap: initialize the schema, then start the web server.
-// Handles cPanel-style hosted Node apps where PORT is injected.
+// Bootstrap: initialize the schema before serving requests.
+//
+// On traditional hosts (cPanel, local `npm start`) this file is the
+// entry point, so we also bind a port. On serverless platforms such as
+// Vercel the module is only imported and the platform owns the socket,
+// so binding a port there would conflict (FUNCTION_INVOCATION_FAILED).
 // ============================================================
-(async () => {
+async function bootstrap() {
   try {
     await initDatabase();
     await migrateDatabase();
@@ -546,8 +550,18 @@ function poolPing() {
     // until the database credentials are fixed.
     console.error('[server] Database initialization failed:', err.message);
   }
+}
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`JS NETWORK server running at http://localhost:${PORT}`);
+const bootstrapPromise = bootstrap();
+
+if (require.main === module) {
+  bootstrapPromise.then(() => {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`JS NETWORK server running at http://localhost:${PORT}`);
+    });
   });
-})();
+}
+
+// Export the Express instance so serverless runtimes (Vercel) can use it
+// as the request handler while `node server.js` keeps working locally.
+module.exports = app;
