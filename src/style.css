@@ -517,7 +517,7 @@ body.lang-bn {
 .login-developer {
   text-align: right;
   margin-top: 10px;
-  color: orange;
+  color: #000000;
   font-weight: bold;
   font-size: 13px;
 }
@@ -2452,7 +2452,7 @@ button.btn:disabled:hover {
   }
 
   .print-footer-developer {
-    color: orange !important;
+    color: #000000 !important;
     font-weight: bold !important;
     font-size: 10px !important;
     margin-top: 2px !important;
