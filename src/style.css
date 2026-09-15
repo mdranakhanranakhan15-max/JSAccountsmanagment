@@ -514,6 +514,14 @@ body.lang-bn {
   animation: fadeIn 0.3s ease;
 }
 
+.login-developer {
+  text-align: right;
+  margin-top: 10px;
+  color: orange;
+  font-weight: bold;
+  font-size: 13px;
+}
+
 .login-brand {
   display: flex;
   flex-direction: column;
@@ -2441,6 +2449,15 @@ button.btn:disabled:hover {
     margin-top: 20px !important;
     padding-top: 6px !important;
     border-top: 1px solid #eee !important;
+  }
+
+  .print-footer-developer {
+    color: orange !important;
+    font-weight: bold !important;
+    font-size: 10px !important;
+    margin-top: 2px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   /* Invoice Receipt Support */
